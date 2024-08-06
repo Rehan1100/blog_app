@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const categoryRoutes = require('./routes/categoryRoutes');
 const postRoutes = require('./routes/postRoutes');
 const userRoutes = require('./routes/userRoutes');
+const blogRoutes = require('./routes/blogRoutes');
 
 dotenv.config();
 connectDB();
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use('/categories', categoryRoutes);
 app.use('/posts', postRoutes);
 app.use('/users', userRoutes);
+app.use('/blogs', blogRoutes);
 
 const PORT = process.env.PORT || 5000;
 
