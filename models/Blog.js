@@ -12,7 +12,7 @@ const blogSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now },
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Author',
+        ref: 'User',
         required: true
     },
     categories: [{

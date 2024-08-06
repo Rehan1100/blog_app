@@ -1,12 +1,12 @@
 const Blog = require('../models/Blog');
-const Author = require('../models/Author');
+const User = require('../models/User');  // Ensure User is imported
 const Category = require('../models/Category');
 
 // Utility function to format blog data
 const formatBlog = async (blog) => {
     try {
-        const author = await Author.findById(blog.author);
-        const categories = await Category.find({ _id: { $in: blog.categories } });
+        const author = await User.findById(blog.author); // Fetch author details from User model
+        const categories = await Category.find({ _id: { $in: blog.categories } }); // Fetch category details
 
         return {
             title: blog.title,
@@ -16,23 +16,24 @@ const formatBlog = async (blog) => {
             createdAt: blog.createdAt,
             updatedAt: blog.updatedAt,
             id: blog._id,
-            author: author ? {
+            author: {
                 id: author._id,
                 firstName: author.firstName,
                 lastName: author.lastName,
                 email: author.email,
                 image: author.image,
                 bio: author.bio
-            } : null,  // Handle the case where author is not found
+            },
             categories: categories.map(cat => ({
                 id: cat._id,
                 title: cat.title,
                 description: cat.description,
                 color: cat.color
-            })) || []  // Handle the case where no categories are found
+            }))
         };
-    } catch (error) {
-        throw new Error(`Error formatting blog: ${error.message}`);
+    } catch (err) {
+        console.error("Error formatting blog:", err);
+        throw err; // Re-throw error to be handled in the controller
     }
 };
 
