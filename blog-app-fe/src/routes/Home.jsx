@@ -71,6 +71,9 @@ function Home() {
       </div>
 
      <CategoryList/>
+     <br/>
+     <br/>
+     <br/>
     </Container>
   );
 }

@@ -47,6 +47,8 @@ function App() {
           </>
         ) : (
           <>
+                <Route path="/blog/:id" element={<Blog />} />
+            <Route path="/category/:id" element={<Blogs />} />
           <Route path="/viewBlogs" element={<DeleteBlogs/>} />
             <Route
               path="/admin"

@@ -16,8 +16,13 @@ function Navigation() {
   return (
     <Navbar bg="light" data-bs-theme="light">
     <Container>
-      <Navbar.Brand as={Link} to="/">Blog-App</Navbar.Brand>
+    {!auth.isAuthenticated ? 
+      <Navbar.Brand as={Link} to="/">Blog-App</Navbar.Brand> : 
+      <Navbar.Brand as={Link} to="/admin">Blog-App</Navbar.Brand>
+
+    }
       {!auth.isAuthenticated ? (<Nav className="me-auto">
+        
         <Nav.Link as={Link} to="/">Home</Nav.Link>
         <Nav.Link as={Link} to="/categories">Categories</Nav.Link>
         <Nav.Link as={Link} to="/allblogs">Blogs</Nav.Link>
