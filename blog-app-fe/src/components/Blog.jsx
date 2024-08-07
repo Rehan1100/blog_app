@@ -48,6 +48,20 @@ const Blog = () => {
         ))}
       </div>
     </div>
+    <div className='author-detail'>
+        <div className='authorImg'>
+          <img style={{width:'300px', aspectRatio: '1/1'}} className='imgauth'src={`data:image/jpeg;base64,${arrayBufferToBase64(blog.author?.image.data)}`} alt="" />
+        </div>
+        <div>
+        <strong>Author Name: </strong>    <span>{blog?.author?.firstName+" "+blog?.author?.lastName}</span> 
+        </div>
+        <div>
+        <strong>Bio:</strong>    <span>{blog?.author?.bio}</span> 
+
+        </div>
+
+    </div>
+   
     </Container>
   );
 };
