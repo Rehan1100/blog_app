@@ -1,29 +1,32 @@
 // AdminPanel.js
-import { useNavigate } from 'react-router-dom';
-import { Button, Container } from 'react-bootstrap';
-import { useAuth } from '../context/AuthContext';
+import { Dropdown, Container, DropdownButton } from 'react-bootstrap';
 import CreateBlog from '../components/CreateBlog'; // Import the CreateBlog component
 import CreateCategory from '../components/CreateCategory'; // Import the CreateBlog component
+import { useState } from 'react';
 
 function AdminPanel() {
-  const navigate = useNavigate();
-  const { logout } = useAuth();
+  const [selectedOption, setSelectedOption] = useState('');
 
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // Clear JWT token from local storage
-    logout(); // Update auth context
-    navigate('/'); // Redirect to landing page
+  const handleSelect = (eventKey) => {
+    setSelectedOption(eventKey);
   };
-
   return (
     <Container>
-      <h2 className="mt-4">Admin Panel</h2>
-      <Button variant="primary" onClick={handleLogout}>Logout</Button>
+    <h2 className="mt-4">Admin Panel</h2>
 
-      <CreateBlog /> 
-      {/* Include the CreateBlog component */}
-      <CreateCategory/>
-    </Container>
+    <DropdownButton
+      id="dropdown-basic-button"
+      title="Select Action"
+      onSelect={handleSelect}
+      className="mb-4"
+    >
+      <Dropdown.Item eventKey="createBlog">Create Blog</Dropdown.Item>
+      <Dropdown.Item eventKey="createCategory">Create Category</Dropdown.Item>
+    </DropdownButton>
+
+    {selectedOption === 'createBlog' && <CreateBlog />}
+    {selectedOption === 'createCategory' && <CreateCategory />}
+  </Container>
   );
 }
 

@@ -45,7 +45,7 @@ function CreateCategory() {
     console.log(formData)
     try {
       const token = localStorage.getItem('token'); // Assuming you store the JWT token in local storage
-      const response = await axios.post('http://10.50.1.187:5001/categories', formData, {
+      const response = await axios.post('http://localhost:5001/categories', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ function CreateCategory() {
 
   return (
     <Container>
-      <h2>Create New Blog</h2>
+      <h2>Create New Category</h2>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="formName">
           <Form.Label>Name</Form.Label>

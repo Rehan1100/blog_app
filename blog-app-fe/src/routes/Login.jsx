@@ -14,13 +14,15 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://10.50.1.187:5001/users/login', { email, password });
+      const response = await axios.post('http://localhost:5001/users/login', { email, password });
 
       // Destructure token and role from the response
-      const { token, role } = response.data;
+      const { token, role,_id,firstName,lastName } = response.data;
       console.log(role)
       // Store token in localStorage
       localStorage.setItem('token', token);
+      localStorage.setItem('_id',_id)
+      localStorage.setItem('name',firstName+" "+lastName)
 
       // Set authentication state
       login(role);

@@ -20,15 +20,13 @@ function CreateBlog() {
   useEffect(() => {
     const fetchData = async () => {
       try { 
-        const response = await axios.get('http://10.50.1.187:5001/categories/', {
+        const response = await axios.get('http://localhost:5001/categories/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
         });
-        console.log(response.data.data)
         setCategories (response.data.data);
-        console.log(categories)
       } catch (error) {
         console.error(error);
       }
@@ -43,7 +41,16 @@ function CreateBlog() {
       [name]: value,
     });
   };
-
+  const handleMultipleChange = (event) => {
+    const { options } = event.target;
+    const selectedOptions = [];
+    for (const option of options) {
+      if (option.selected) {
+        selectedOptions.push(option.value);
+      }
+    }
+    setBlogData({ ...blogData, category: selectedOptions });
+  };
   const handleContentChange = (content) => {
     setBlogData({
       ...blogData,
@@ -65,26 +72,27 @@ function CreateBlog() {
     formData.append('description', blogData.description);
     formData.append('image', blogData.image);
     formData.append('content', blogData.content);
-    formData.append('author', blogData.author);
-    formData.append('category', blogData.category);
+    formData.append('author', localStorage.getItem('_id'));
+    formData.append('cat',blogData.category);
     try {
       const token = localStorage.getItem('token'); // Assuming you store the JWT token in local storage
-      const response = await axios.post('http://10.50.1.187:5001/blogs', formData, {
+      const response = await axios.post('http://localhost:5001/blogs', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       });
       if (response.status === 201) {
-        alert('Blog created successfully!');
-        setBlogData({
-          title: '',
-          description: '',
-          image: '',
-          content: '',
-          author: '',
-          category: '',
-        });
+        alert('Blog created successfully!')
+          let blogData={
+            title: '',
+            description: '',
+            image: '',
+            content: '',
+            author: '',
+            category: '',
+          }
+          setBlogData(blogData)
       }
     } catch (err) {
       console.error(err.message);
@@ -143,17 +151,18 @@ function CreateBlog() {
           <Form.Control
             type="text"
             name="author"
-            value={blogData.author}
-            onChange={handleChange}
+            disabled
+            value={localStorage.getItem('name')}
             required
           />
         </Form.Group>
         <Form.Group controlId="formCategory" className="mt-3">
           <Form.Label>Category</Form.Label>
           <Form.Select
+          multiple
             name="category"
             value={blogData.category}
-            onChange={handleChange}
+            onChange={handleMultipleChange}
             required
           >
             {/* <option key={"akdhak"} value="">Select a category</option> */}

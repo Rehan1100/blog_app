@@ -31,7 +31,7 @@ function Signup() {
     formData.append('role', blogData.role);
     try {
       debugger
-      const resposne = await axios.post('http://10.50.1.187:5001/users/register', formData,{
+      const resposne = await axios.post('http://localhost:5001/users/register', formData,{
         'Content-Type': 'multipart/form-data',
 
       });

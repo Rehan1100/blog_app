@@ -1,11 +1,11 @@
 import { Container } from "react-bootstrap"
 import CategoryList from "../components/CategoryList"
 
-function Categories({categoryList}) {
+function Categories() {
   return (
     <>
      
-      <CategoryList categoryList={categoryList} />
+      <CategoryList />
       </>
     
   )
