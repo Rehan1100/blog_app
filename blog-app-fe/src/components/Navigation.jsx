@@ -11,7 +11,7 @@ function Navigation() {
           <Nav >
             <Nav.Link as={Link} to={"/"} >Home</Nav.Link>
             <Nav.Link as={Link} to={"/categories"} >Categories</Nav.Link>
-            <Nav.Link as={Link} to={"/blogs"}>Blogs</Nav.Link>
+            <Nav.Link as={Link} to={"/allblogs"}>Blogs</Nav.Link>
           </Nav>
         </Container>
       </Navbar>

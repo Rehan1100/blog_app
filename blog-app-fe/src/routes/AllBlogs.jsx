@@ -2,24 +2,22 @@ import React from 'react';
 import { Container } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
 
-const Blogs = ({ categories, blogs }) => {
+const Blogs = ({  blogs }) => {
   const { id } = useParams();
-  const category = categories.find((category) => category.id === parseInt(id));
+//   const category = categories.find((category) => category.id === parseInt(id));
   
-  if (!category) {
-    return <div>Category not found</div>;
-  }
+//   if (!category) {
+//     return <div>Category not found</div>;
+//   }
 
-  const categoryBlogs = blogs.filter((blog) => blog.categories.includes(category.title));
+//   const categoryBlogs = blogs.filter((blog) => blog.categories.includes(category.title));
 
   return (
     <Container>
     <div className="category-details-page">
-      <h1>{category.title}</h1>
-      <p>{category.description}</p>
       <div className="blog-internal-container">
-        {categoryBlogs.length ? (
-          categoryBlogs.map((blog) => (
+        {blogs.length ? (
+          blogs.map((blog) => (
             <div className="blog" key={blog.id}>
               <div className="blog-image">
                 <Link to={`/blog/${blog.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>

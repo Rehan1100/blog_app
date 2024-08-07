@@ -9,6 +9,7 @@ import Navigation from './components/Navigation';
 import './App.css'
 import Categories from './routes/Categories';
 import Blogs from './routes/Blogs';
+import AllBlogs from './routes/AllBlogs';
 import Blog from './components/Blog';
 import React, { useState } from 'react';
 
@@ -72,19 +73,20 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/categories" element={<Categories categoryList={categories} />} />
             <Route path="/blogs" element={<Blogs />} />
+            <Route path="/allblogs" element={<AllBlogs blogs={blogs} />} />
             <Route path="/blog/:id" element={<Blog blogs={blogs} />} />
             <Route path="/category/:id" element={<Blogs categories={categories} blogs={blogs} />} />
 
             <Route
               path="/admin"
-              element={<ProtectedRoute element={<AdminPanel />} requiredRole="admin" />}
+              element={<ProtectedRoute element={<AdminPanel />} requiredRole="author" />}
             />
           </>
         ) : (
           <>
             <Route
               path="/admin"
-              element={<ProtectedRoute element={<AdminPanel />} requiredRole="admin" />}
+              element={<ProtectedRoute element={<AdminPanel />} requiredRole="author" />}
             />
           </>
         )}

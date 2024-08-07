@@ -1,6 +1,9 @@
+// AdminPanel.js
 import { useNavigate } from 'react-router-dom';
 import { Button, Container } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
+import CreateBlog from '../components/CreateBlog'; // Import the CreateBlog component
+import CreateCategory from '../components/CreateCategory'; // Import the CreateBlog component
 
 function AdminPanel() {
   const navigate = useNavigate();
@@ -16,6 +19,10 @@ function AdminPanel() {
     <Container>
       <h2 className="mt-4">Admin Panel</h2>
       <Button variant="primary" onClick={handleLogout}>Logout</Button>
+
+      <CreateBlog /> 
+      {/* Include the CreateBlog component */}
+      <CreateCategory/>
     </Container>
   );
 }
