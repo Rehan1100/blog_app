@@ -1,37 +1,67 @@
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
 const User = require('../models/User');
 const Blog = require('../models/Blog');
 const jwt = require('jsonwebtoken');
+
+// Directory for storing images
+const uploadDir = path.join(__dirname, '..', 'uploads');
+
+// Ensure the uploads directory exists
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
+// Multer storage configuration
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        cb(null, 'image-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage }).single('image');
 
 const generateToken = (id, role) => {
     return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
 exports.registerUser = async (req, res) => {
-    const { firstName, lastName, email, password, role, image, bio } = req.body;
-
-    try {
-        const userExists = await User.findOne({ email });
-
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
+    upload(req, res, async function (err) {
+        if (err) {
+            return res.status(500).json({ message: err.message });
         }
 
-        const user = new User({ firstName, lastName, email, password, role, image, bio });
-        await user.save();
+        const { firstName, lastName, email, password, role, bio } = req.body;
+        const image = req.file ? req.file.path : null;
 
-        res.status(201).json({
-            _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            role: user.role,
-            image: user.image,
-            bio: user.bio,
-            token: generateToken(user._id, user.role),
-        });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+        try {
+            const userExists = await User.findOne({ email });
+
+            if (userExists) {
+                return res.status(400).json({ message: 'User already exists' });
+            }
+
+            const user = new User({ firstName, lastName, email, password, role, image, bio });
+            await user.save();
+
+            res.status(201).json({
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role,
+                image: user.image,
+                bio: user.bio,
+                token: generateToken(user._id, user.role),
+            });
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    });
 };
 
 exports.loginUser = async (req, res) => {
@@ -67,8 +97,6 @@ exports.getUserProfile = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
-
-
 
 exports.getBlogsByUser = async (req, res) => {
     const userId = req.params.id;
