@@ -73,15 +73,27 @@ const formatBlog = async (blog) => {
 exports.getBlogs = async (req, res) => {
     try {
         const blogs = await Blog.find().populate('author').populate('categories');
-        const formattedBlogs = await Promise.all(blogs.map(formatBlog));
+        
+        const formattedBlogs = await Promise.all(blogs.map(async (blog) => {
+            if (!blog.author || !blog.categories) {
+                console.error('Missing author or categories in blog:', blog);
+                return null;
+            }
+            return await formatBlog(blog);
+        }));
+        
+        const validBlogs = formattedBlogs.filter(blog => blog !== null);
+        
         res.json({
             message: "Return all blogs!",
-            data: formattedBlogs
+            data: validBlogs
         });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: err.message });
     }
 };
+
 
 exports.getBlogById = async (req, res) => {
     try {
