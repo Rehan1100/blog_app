@@ -1,12 +1,45 @@
+const multer = require('multer');
+const path = require('path');
+
+// Set storage engine
+const storage = multer.diskStorage({
+    destination: './uploads/', // Adjust the path as necessary
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+    }
+});
+
+// Check file type
+function checkFileType(file, cb) {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb('Error: Images Only!');
+    }
+}
+
+// Init upload
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 }, // Limit size to 1MB
+    fileFilter: (req, file, cb) => {
+        checkFileType(file, cb);
+    }
+}).single('image');
+
+// Ensure User is imported
 const Blog = require('../models/Blog');
-const User = require('../models/User');  // Ensure User is imported
+const User = require('../models/User');
 const Category = require('../models/Category');
 
 // Utility function to format blog data
 const formatBlog = async (blog) => {
     try {
-        const author = await User.findById(blog.author); // Fetch author details from User model
-        const categories = await Category.find({ _id: { $in: blog.categories } }); // Fetch category details
+        const author = await User.findById(blog.author);
+        const categories = await Category.find({ _id: { $in: blog.categories } });
 
         return {
             title: blog.title,
@@ -33,10 +66,9 @@ const formatBlog = async (blog) => {
         };
     } catch (err) {
         console.error("Error formatting blog:", err);
-        throw err; // Re-throw error to be handled in the controller
+        throw err;
     }
 };
-
 
 exports.getBlogs = async (req, res) => {
     try {
@@ -66,41 +98,55 @@ exports.getBlogById = async (req, res) => {
 };
 
 exports.createBlog = async (req, res) => {
-    const { title, description, image, content, author, categories } = req.body;
-    try {
-        const newBlog = new Blog({ title, description, image, content, author, categories });
-        const blog = await newBlog.save();
-        const formattedBlog = await formatBlog(blog);
-        res.status(201).json({
-            message: "Blog created successfully!",
-            data: formattedBlog
-        });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ message: err.message });
+        }
+        const { title, description, content, author, categories } = req.body;
+        const image = req.file ? req.file.path : null; // Save the file path to image
+
+        try {
+            const newBlog = new Blog({ title, description, image, content, author, categories });
+            const blog = await newBlog.save();
+            const formattedBlog = await formatBlog(blog);
+            res.status(201).json({
+                message: "Blog created successfully!",
+                data: formattedBlog
+            });
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    });
 };
 
 exports.updateBlog = async (req, res) => {
-    const { title, description, image, content, author, categories } = req.body;
-    try {
-        const blog = await Blog.findById(req.params.id);
-        if (!blog) return res.status(404).json({ message: 'Blog not found' });
-        blog.title = title;
-        blog.description = description;
-        blog.image = image;
-        blog.content = content;
-        blog.author = author;
-        blog.categories = categories;
-        blog.updatedAt = Date.now();
-        const updatedBlog = await blog.save();
-        const formattedBlog = await formatBlog(updatedBlog);
-        res.json({
-            message: "Blog updated successfully!",
-            data: formattedBlog
-        });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ message: err.message });
+        }
+        const { title, description, content, author, categories } = req.body;
+        const image = req.file ? req.file.path : null;
+
+        try {
+            const blog = await Blog.findById(req.params.id);
+            if (!blog) return res.status(404).json({ message: 'Blog not found' });
+            blog.title = title;
+            blog.description = description;
+            if (image) blog.image = image; // Only update image if a new one is uploaded
+            blog.content = content;
+            blog.author = author;
+            blog.categories = categories;
+            blog.updatedAt = Date.now();
+            const updatedBlog = await blog.save();
+            const formattedBlog = await formatBlog(updatedBlog);
+            res.json({
+                message: "Blog updated successfully!",
+                data: formattedBlog
+            });
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    });
 };
 
 exports.deleteBlog = async (req, res) => {
