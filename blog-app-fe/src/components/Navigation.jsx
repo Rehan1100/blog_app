@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navbar, Nav, Container, Dropdown, Image } from 'react-bootstrap';
+import { Navbar, Nav, Container, Dropdown, Image, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import avatar from '../assets/react.svg';
 import { useAuth } from '../context/AuthContext';
@@ -22,23 +22,9 @@ function Navigation() {
         <Nav.Link as={Link} to="/categories">Categories</Nav.Link>
         <Nav.Link as={Link} to="/allblogs">Blogs</Nav.Link>
       </Nav>) :<Nav.Link as={Link} to="/viewBlogs">View Blogs</Nav.Link>}
-      <Nav className="ms-auto">
-        <Dropdown align="end">
-          <Dropdown.Toggle as={Nav.Item} className="d-flex align-items-center">
-            <Image
-              src={avatar}
-              roundedCircle
-              height="30"
-              width="30"
-              className="me-2"
-            />
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item as={Link} to="/profile">Profile</Dropdown.Item>
-            <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </Nav>
+      
+      {!auth.isAuthenticated ?<Nav.Link as={Link} to="/login">login</Nav.Link> : <span style={{cursor:'pointer'}} onClick={handleLogout}>Logout</span>}
+
       
     </Container>
   </Navbar>
