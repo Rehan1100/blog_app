@@ -35,7 +35,8 @@ const Blog = () => {
   return (
     <Container>
     <div className="blog-details-page">
-    <img src={`data:image/jpeg;base64,${arrayBufferToBase64(blog.image?.data)}`} alt={blog.title} />
+    <img style={{width: '800px',
+  aspectRatio: '16/9'}} src={`data:image/jpeg;base64,${arrayBufferToBase64(blog.image?.data)}`} alt={blog.title} />
     <h1>{blog.title}</h1>
       <p>{blog?.author?.firstName+" "+blog?.author?.lastName}</p>
       <p>{blog.createdAt?.split("T")[0]?.split("-")?.reverse().join("/")}</p>
